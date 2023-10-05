@@ -1,0 +1,6 @@
+# environments
+.env
+# secrets.txt
+
+# service data and logs
+/mongo
