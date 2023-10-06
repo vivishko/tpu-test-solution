@@ -34,47 +34,50 @@
 
 ## Решение
 
+Немного преобразуем задание - не нравятся названия ручек, не по restу
+
 Бекенд должен содержать два микросервиса:
 
 Первый - auth - содержит 3 апи-ручки:
 
-1. POST - /signup
-   Request: { "password": "blablabla" }
+1. POST - /signup </br>
+   Request: { "password": "blablabla" } </br>
    Response: { "id": "созданный ObjectID", "token": "Сгенерированный bearer token" }
-2. POST - /signin
-   Request: { "id": "Object id", "password": "blablabla" }
-   Response 200: { "token": "Сгенерированный bearer token" }
+
+2. POST - /signin </br>
+   Request: { "id": "Object id", "password": "blablabla" } </br>
+   Response 200: { "token": "Сгенерированный bearer token" } </br>
    Response 401: { "error_message": "Bad id or password" }
-3. GET - /user
-   Request: В хедере авторизация по bearer
-   Response 200: { "id": "Object id" }
+
+3. GET - ~~/user~~ /me (auth bearer) </br>
+   Request: В хедере авторизация по bearer </br>
+   Response 200: { "id": "Object id" } </br>
    Response 403: { "error_message": "Bad token" }
 
 Второй - todo - содержит также 3 апи ручки:
 
-1. POST - /create
-   В header авторизация по bearer
-   Request: В хедере авторизация по bearer { "title": "Название", "description": "bla bla bla" }
-   Response 200: { "id": "Object id" }
-   Response 401: { "error_message": "Bad token" }
-2. GET - /get
-   В header авторизация по bearer
-   Response 200:
-   [
-   { "id": "objectid", "title": "Название", "description": "bla bla bla" },
-   { "id": "objectid", "title": "Название", "description": "bla bla bla" }
-   ]
+1. GET - ~~/get~~ /tasks (auth bearer) </br>
+   Response 200: </br>
+   [ </br>
+   { "id": "objectid", "title": "Название", "description": "bla bla bla" }, </br>
+   { "id": "objectid", "title": "Название", "description": "bla bla bla" } </br>
+   ] </br>
    Response 403: { "error_message": "Bad token" }
-3. DELETE - /delete
-   В header авторизация по bearer
-   Request: # Проверять если овнером этого документа является отправляющий запрос юзер
-   { "id": "objectid" }
-   Response 200: [ "id": "objectid" ]
+2. POST - ~~/create~~ /task (auth bearer) </br>
+   Request: В хедере авторизация по bearer { "title": "Название", "description": "bla bla bla" } </br>
+   Response 200: { "id": "Object id" } </br>
+   Response 401: { "error_message": "Bad token" }
+3. DELETE - ~~/delete~~ /task/:id (auth bearer) </br>
+   Request: # Проверять если овнером этого документа является отправляющий запрос юзер </br>
+   { "id": "objectid" } </br>
+   Response 200: [ "id": "objectid" ] </br>
    Response 403: { "error_message": "Is not an owner" }
+
+Необходимо также использовать какой-либо gateway для проксирования запросов к микросервисам. Будем исползовать nginx.
 
 Поднять Docker compose:
 
-MongoDB -> auth-service -> todo-service
+MongoDB -> nginx -> auth-service -> todo-service
 
 ## Инструкция по использованию
 
@@ -102,10 +105,9 @@ $ docker-compose up -d
 $ docker-compose down
 ```
 
-3. Обратиться к сервису auth через порт 8000 и к todo через порт 8001 через Postman или любым другим удобным способом
+3. Обратиться к сервису через порт 80 через Postman или любым другим удобным способом с урлом начинающимся на /api/ (ВАЖНО: прочитать [секцию с решением](https://github.com/vivishko/tpu-test-solution#%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D0%B5), т.к. названия ручек были изменены)
 
-пример запроса на порт 8000: /auth/signup
-пример запроса на порт 8001: /todo/create
+пример запроса: /auth/signup
 
 Результат:
 
