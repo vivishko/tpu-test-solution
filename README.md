@@ -69,7 +69,7 @@
    Response 401: { "error_message": "Bad token" }
 3. DELETE - ~~/delete~~ /task/:id (auth bearer) </br>
    Request: # Проверять если овнером этого документа является отправляющий запрос юзер </br>
-   { "id": "objectid" } </br>
+   ~~{ "id": "objectid" }~~ id прокидывается в query-параметрах </br>
    Response 200: [ "id": "objectid" ] </br>
    Response 403: { "error_message": "Is not an owner" }
 
@@ -106,7 +106,17 @@ $ docker-compose down
 ```
 
 3. Обратиться к сервису через порт 80 через Postman или любым другим удобным способом с урлом начинающимся на /api/ (ВАЖНО: прочитать [секцию с решением](https://github.com/vivishko/tpu-test-solution#%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D0%B5), т.к. названия ручек были изменены) </br>
-   пример запроса: /auth/signup
+   пример запроса: /api/{название микросервиса}/{путь к эндпоинту}
+
+   если это auth микросервис, то запросы следующие: </br>
+   /api/auth/me (GET) </br>
+   /api/auth/signup (POST) </br>
+   /api/auth/signin (POST)
+
+   если это auth микросервис, то запросы следующие: </br>
+   /api/todo/tasks (GET) </br>
+   /api/todo/task (POST) </br>
+   /api/todo/task/:id (DELETE)
 
 Результат:
 
