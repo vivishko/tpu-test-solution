@@ -10,13 +10,13 @@ export class AuthService {
   ) {}
 
   // валидация
-  async validateUser(id: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByPassword(pass); // TODO: переделать
-    if (user) {
-      return user;
-    }
-    return null;
-  }
+  // async validateUser(id: string, pass: string): Promise<any> {
+  //   const user = await this.usersService.findOneById(id);
+  //   if (user && user.password === pass) {
+  //     return user;
+  //   }
+  //   return null;
+  // }
 
   // регистрация
   async signup(pass: string) {
@@ -24,7 +24,8 @@ export class AuthService {
     const user = await this.usersService.create(pass);
 
     // сгенерировать bearer token
-    const jwt_token = this.jwtService.sign(user._id, {
+    const payload = { id: user._id };
+    const jwt_token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
 
@@ -37,11 +38,17 @@ export class AuthService {
 
   // авторизация
   async login(id: string) {
-    //
+    // проверить id и password - происходит в валидации
+
+    // сгенерировать bearer token
+    const payload = { id: id };
+    const jwt_token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    // вернуть token
     return {
-      access_token: this.jwtService.sign(id, {
-        secret: process.env.JWT_SECRET,
-      }),
+      token: jwt_token,
     };
   }
 

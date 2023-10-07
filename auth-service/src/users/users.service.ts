@@ -15,10 +15,6 @@ export class UsersService {
     return this.userModel.findById(id).exec();
   }
 
-  async findOneByPassword(password: string): Promise<any> {
-    return this.userModel.findOne({ password }).exec();
-  }
-
   async findAll(): Promise<any> {
     return this.userModel.find().exec();
   }

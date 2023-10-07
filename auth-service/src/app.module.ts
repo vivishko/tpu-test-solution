@@ -8,9 +8,7 @@ import { UserSchema } from './users/users.schema';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb://your_username:your_password@localhost:27017/your_db_name',
-    ),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     AuthModule,
   ],

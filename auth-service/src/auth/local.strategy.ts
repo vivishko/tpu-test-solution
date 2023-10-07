@@ -10,9 +10,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(id: string, password: string): Promise<any> {
-    const user = await this.userService.findOneByPassword(password);
-    if (!user) {
-      throw new UnauthorizedException();
+    const user = await this.userService.findOneById(id);
+    if (!user || user.password !== password) {
+      throw new UnauthorizedException('Bad id or password');
     }
     return user;
   }
