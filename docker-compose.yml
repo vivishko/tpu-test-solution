@@ -4,30 +4,27 @@ services:
   mongo:
     image: mongo:latest
     restart: always
-    # ports:
-    #   - "27017:27017"
     environment:
-      MONGO_USERNAME: ${MONGODB_USERNAME}
-      MONGO_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
     networks:
       - backend-network
     volumes:
       - ./mongo/data:/data/db
 
   nginx:
+    # используем как gateway
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
-      - private-network
+      - backend-network
     ports:
       - "80:80"
 
   todo-service:
     build:
       context: ./todo-service
-    # ports:
-    #   - "8001:8001"
     environment:
       MONGO_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo:27017/tododb
     depends_on:
@@ -40,8 +37,6 @@ services:
   auth-service:
     build:
       context: ./auth-service
-    ports:
-      - "8000:8000"
     environment:
       MONGO_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo:27017/authdb
       JWT_SECRET: ${JWT_SECRET}
